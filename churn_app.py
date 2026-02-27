@@ -1,8 +1,4 @@
-# ============================================================
-# CUSTOMER CHURN PREDICTION - PHASE 4: STREAMLIT WEB APP
-# ============================================================
-# Run: streamlit run churn_app.py
-# ============================================================
+
 
 import streamlit as st
 import numpy as np
@@ -11,7 +7,7 @@ import pickle
 import plotly.graph_objects as go
 import plotly.express as px
 
-# ── Page Config ───────────────────────────────────────────
+
 st.set_page_config(
     page_title="Customer Churn Predictor",
     page_icon="📡",
@@ -19,7 +15,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ── Custom CSS ────────────────────────────────────────────
+
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&display=swap');
@@ -72,7 +68,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-# ── Load Model & Artifacts ────────────────────────────────
+
 @st.cache_resource
 def load_artifacts():
     with open('best_model.pkl', 'rb') as f:
@@ -96,7 +92,7 @@ st.markdown('<p class="subtitle-text">ML-powered churn risk analysis · '
             'Logistic Regression · ROC-AUC: 0.832 · Telco Dataset</p>',
             unsafe_allow_html=True)
 
-# Model metrics row
+
 c1, c2, c3, c4 = st.columns(4)
 with c1:
     st.markdown('<div class="metric-card"><div class="metric-label">Model</div>'
@@ -118,7 +114,7 @@ with c4:
 st.markdown("---")
 
 
-# ── Sidebar — Customer Profile ────────────────────────────
+
 st.sidebar.markdown("## 👤 Customer Profile")
 st.sidebar.markdown("Fill in the customer details:")
 
@@ -154,13 +150,13 @@ partner    = st.sidebar.selectbox("Has Partner", ["Yes", "No"])
 dependents = st.sidebar.selectbox("Has Dependents", ["Yes", "No"])
 
 
-# ── Feature Engineering (must match Phase 2 exactly!) ─────
+
 def encode(val): return 1 if val in ['Yes', 'Male'] else 0
 def encode_svc(val): return 1 if val == 'Yes' else 0
 
 total_charges = monthly_charges * tenure
 
-# Engineered features
+
 charges_per_tenure = monthly_charges / (tenure + 1)
 total_services     = sum([
     encode_svc(phone), encode_svc(online_sec),
@@ -171,7 +167,7 @@ total_services     = sum([
 is_new_customer = 1 if tenure < 6 else 0
 high_charges    = 1 if monthly_charges > 64.76 else 0
 
-# One-hot encoded columns
+
 input_dict = {
     'gender':            encode(gender),
     'SeniorCitizen':     encode(senior),
@@ -211,7 +207,7 @@ input_dict = {
 input_df     = pd.DataFrame([input_dict])[feature_names]
 input_scaled = scaler.transform(input_df)
 
-# Prediction
+
 churn_prob  = model.predict_proba(input_scaled)[0][1]
 churn_pred  = model.predict(input_scaled)[0]
 risk_pct    = churn_prob * 100
@@ -219,11 +215,11 @@ risk_label  = "HIGH RISK 🔴" if churn_prob > 0.6 else \
               "MEDIUM RISK 🟡" if churn_prob > 0.4 else "LOW RISK 🟢"
 
 
-# ── Main Layout ───────────────────────────────────────────
+
 left, right = st.columns([1, 1.2], gap="large")
 
 with left:
-    # Risk box
+    
     box_class = "risk-high" if churn_prob > 0.5 else "risk-low"
     label_color = "#f87171" if churn_prob > 0.5 else "#4ade80"
     st.markdown(f"""
@@ -350,6 +346,7 @@ st.markdown("---")
 st.markdown("""
 <div style='text-align:center; color:#334155; font-size:0.8rem; padding:1rem 0'>
     Built with ❤️ · Logistic Regression + Streamlit · Telco Churn Dataset ·
-    ROC-AUC=0.832 · <a href='https://github.com' style='color:#f87171'>View on GitHub</a>
+    ROC-AUC=0.832 · <a href='https://github.com/Akhiliny99/customer-churn-predictor' style='color:#f87171'>View on GitHub</a>
 </div>
+
 """, unsafe_allow_html=True)
