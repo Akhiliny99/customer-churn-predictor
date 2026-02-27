@@ -1,4 +1,5 @@
 Customer-churn-predictor
+
 Built an end-to-end ML classification app predicting 
 customer churn with ROC-AUC of 0.832.
 
